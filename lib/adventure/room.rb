@@ -29,5 +29,13 @@ class Adventure
     def west
       paths[:west]
     end
+    
+    def user_output
+      output = description + "\n\n"
+      paths.each do |k, v|
+        output << "Go #{k} to #{v}\n" if v
+      end
+      output
+    end
   end
 end

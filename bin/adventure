@@ -1,0 +1,14 @@
+#!/usr/bin/env ruby -I lib
+require 'readline'
+require 'adventure'
+
+adventure = Adventure.from_file('adventure.yml')
+
+begin
+  while line = Readline.readline("#{adventure.current_room.name.to_s} > ", true)
+    exit if line.match(/^exit/)
+    puts adventure.command(line)
+  end
+rescue Interrupt => e
+  exit
+end

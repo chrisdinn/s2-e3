@@ -1,3 +1,5 @@
+require 'yaml'
+
 require 'adventure/room'
 
 class Adventure
@@ -6,6 +8,21 @@ class Adventure
   
   def initialize
     @rooms = []
+  end
+  
+  def self.from_file(file)
+    raw_adventure = YAML.load_file(file)
+    adventure = new
+    raw_adventure["rooms"].each do |room|      
+      adventure.add_room  room.delete("name").to_sym,
+                          :description => room["description"],
+                          :north => room["paths"]["north"] ? room["paths"]["north"].to_sym : nil,
+                          :south => room["paths"]["south"] ? room["paths"]["south"].to_sym : nil,
+                          :east => room["paths"]["east"] ? room["paths"]["east"].to_sym : nil,
+                          :west => room["paths"]["west"] ? room["paths"]["west"].to_sym : nil
+    end
+  
+    adventure
   end
   
   def add_room(*args)
@@ -22,10 +39,19 @@ class Adventure
   end
   
   def command(text)
-    if text.match /^go (.+)/
+    response = "\n"
+
+    case text
+    when /^\s*go\s+(.+)/
       go $1.to_sym
-      current_room.description
+      response << current_room.user_output
+    when /^\s*look\s*$/
+      response << current_room.user_output
+    else
+      response << ["what?", "huh?", "don't understand that"][rand(3)] << "\n"
     end
+    
+    response << "\n"
   end
   
 end

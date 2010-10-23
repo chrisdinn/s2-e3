@@ -38,9 +38,8 @@ class AdventureTest < Test::Unit::TestCase
     
     assert_equal :shopping_mall, adventure.current_room.name
   end
-
   
-  def test_user_command
+  def test_go_command
     adventure = Adventure.new
     adventure.add_room :shopping_mall, :south => :parking_lot
     adventure.add_room :parking_lot, :description => "A scary parking lot"
@@ -48,6 +47,29 @@ class AdventureTest < Test::Unit::TestCase
     adventure.command "go south"
     
     assert_equal :parking_lot, adventure.current_room.name
+  end
+  
+  def test_look_command
+    description = "A friendly shopping mall"
+    adventure = Adventure.new
+    adventure.add_room :shopping_mall, :description => description
+
+    assert_match /#{description}/, adventure.command("look")
+  end
+  
+  def test_unrecognized_command
+    adventure = Adventure.new
+
+    assert_match /what?|huh?|don't understand that/, adventure.command("not a command")
+  end
+  
+  def test_load_rooms_from_yaml
+    adventure = Adventure.from_file('test/rooms.yml')
+    
+    assert_equal 2, adventure.rooms.size
+    assert_equal :shopping_mall, adventure.current_room.name
+    assert_equal :parking_lot, adventure.rooms.last.name
+    assert_equal :parking_lot, adventure.current_room.paths[:north]
   end
   
 end
