@@ -4,4 +4,3 @@ require 'rubygems'
 require 'redgreen'
 
 require 'adventure'
-require 'room'
