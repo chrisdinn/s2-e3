@@ -2,13 +2,17 @@
 require 'readline'
 require 'adventure'
 
-adventure = Adventure.from_file('adventure.yml')
+system 'clear'
 
 begin
+  
+  adventure = Adventure.from_file('adventure.yml')
+  
   while line = Readline.readline("#{adventure.current_room.name.to_s} > ", true)
     exit if line.match(/^exit/)
     puts adventure.command(line)
   end
+  
 rescue Interrupt => e
   exit
 end

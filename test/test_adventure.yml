@@ -1,9 +1,9 @@
 rooms:
-    - name: shopping_mall
+    - name: shopping mall
       description: An abandoned shopping mall
       paths:
-        north: parking_lot 
-    - name: parking_lot
+        north: parking lot 
+    - name: parking lot
       description: A dark and scary parking lot
       paths:
-        south: shopping_mall
+        south: shopping mall

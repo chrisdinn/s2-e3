@@ -1,6 +1,7 @@
 require 'yaml'
 
 require 'adventure/room'
+require 'adventure/item'
 
 class Adventure
   
@@ -14,12 +15,11 @@ class Adventure
     raw_adventure = YAML.load_file(file)
     adventure = new
     raw_adventure["rooms"].each do |room|      
-      adventure.add_room  room.delete("name").to_sym,
-                          :description => room["description"],
-                          :north => room["paths"]["north"] ? room["paths"]["north"].to_sym : nil,
-                          :south => room["paths"]["south"] ? room["paths"]["south"].to_sym : nil,
-                          :east => room["paths"]["east"] ? room["paths"]["east"].to_sym : nil,
-                          :west => room["paths"]["west"] ? room["paths"]["west"].to_sym : nil
+      adventure.add_room  room.delete("name"), :description => room["description"],
+                          :north => room["paths"]["north"],
+                          :south => room["paths"]["south"],
+                          :east => room["paths"]["east"],
+                          :west => room["paths"]["west"]
     end
   
     adventure
@@ -45,6 +45,8 @@ class Adventure
     when /^\s*go\s+(.+)/
       go $1.to_sym
       response << current_room.user_output
+    when /^\s*look at\s*(.+)$/
+      response << current_room.look_at($1)
     when /^\s*look\s*$/
       response << current_room.user_output
     else
