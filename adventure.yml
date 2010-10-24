@@ -1,10 +1,10 @@
 title: Red Desert
-greeting: 
+greeting: |
     Last night, what a night. You awaken with little memory of how you arrived.
+    The vicious hangover you're currently experiencing may be a clue.
     
-    
-    However, the vicious hangover you're currently experiencing may be a clue.
-
+    You seem to be in an old industrial part of town. Most nearby buildings
+    appear abandoned.
 rooms:
     - name: dock
       description: 
@@ -18,12 +18,17 @@ rooms:
         south: dock
       items:
           - fireworks
+          - bomb
     - name: laneway
       description: This laneway runs past the factory.
       paths:
-        south: factory
-        
+        south: factory      
 items:
     - name: fireworks
       description: they look pretty powerful
       message: a beautiful boom
+    - name: a bomb
+      description: scary
+      require: fireworks
+      message: a terrible boom. You destroyed fireworks.
+      remove: fireworks

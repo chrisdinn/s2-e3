@@ -81,7 +81,7 @@ class Adventure
       go $1
       response << current_room.user_output
     when verb_is('look at')
-      response << current_room.look_at($1)
+      response << current_room.look_at($1) << "\n"
     when verb_is('look')
       response << current_room.user_output
     when verb_is('pick up'), verb_is('take')
@@ -134,6 +134,7 @@ class Adventure
   
   def help
     %{You can do all sorts of thing. Try:
+      
   - "look"
   - "go <direction>"
   - "look at <item>"
