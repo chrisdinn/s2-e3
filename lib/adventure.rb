@@ -60,13 +60,6 @@ class Adventure
     room
   end
   
-  def go(direction)
-    new_room = rooms.find do |room|
-      current_room.paths[direction.to_sym] == room.name
-    end
-    @current_room = new_room if new_room
-  end
-  
   def introduction
     intro = title + "\n\n"
     intro << greeting << "\n\n"
@@ -83,7 +76,11 @@ class Adventure
     when verb_is('look at')
       response << current_room.look_at($1) << "\n"
     when verb_is('look')
-      response << current_room.user_output
+      if $1.empty?
+        response << current_room.user_output
+      else
+        response << current_room.look_at($1) << "\n"
+      end
     when verb_is('pick up'), verb_is('take')
       response << take($1)
     when verb_is('drop')
@@ -97,6 +94,13 @@ class Adventure
     end
     
     response << "\n"
+  end
+  
+  def go(direction)
+    new_room = rooms.find do |room|
+      current_room.paths[direction.to_sym] == room.name
+    end
+    @current_room = new_room if new_room
   end
   
   private
@@ -117,9 +121,9 @@ class Adventure
   
   def use(item_name)
     if item = inventory.find{ |item| item.named?(item_name) }
-      item.use(current_room) + "\n"
+      item.use(current_room).to_s
     else
-      "You don't have #{item_name}.\n"
+      "You don't have #{item_name}."
     end
   end
   
@@ -133,7 +137,7 @@ class Adventure
   end
   
   def help
-    %{You can do all sorts of thing. Try:
+    %{You can do all sorts of things. Try:
       
   - "look"
   - "go <direction>"

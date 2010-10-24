@@ -52,10 +52,10 @@ class Adventure
     end
         
     def user_output
-      output = description + "\n\n"
+      output = description + "\n"
       
       unless items.empty?
-        output << "You can see "
+        output << "\nYou can see "
         output << items[0..-2].collect{ |item| item.name }.join(', ')
         if items.size > 1
           output << " and #{items[-1].name}"

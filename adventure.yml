@@ -1,34 +1,201 @@
-title: Red Desert
+title: Lost in the Red Desert - An simple adventure game by Chris Dinn
 greeting: |
     Last night, what a night. You awaken with little memory of how you arrived.
     The vicious hangover you're currently experiencing may be a clue.
     
     You seem to be in an old industrial part of town. Most nearby buildings
-    appear abandoned.
+    appear abandoned. You're laying on the ground on an old dock, connected
+    to an abandoned factory. 
+    
+    The water is only a few feet from where you're laying. Its oily surface reflects
+    back the harsh sodium light above you with a kaliedescopic shimmer.
+    
+    You stand and look around. All you want is to find your way home.
 rooms:
     - name: dock
-      description: 
-        "A empty dock, it seems like ships once unloaded their cargo here."
+      description: |
+        A empty dock, it seems like ships once unloaded their cargo here. There
+        only seems to be one way out, through an old Factory. 
       paths:
         north: factory 
+      items:
+          - five dollar bill
+          
     - name: factory
-      description: An old cassette tape factory.
+      description: |
+        An old cassette tape factory. Brings back memories. 
       paths:
         north: laneway
         south: dock
-      items:
-          - fireworks
-          - bomb
+          
     - name: laneway
-      description: This laneway runs past the factory.
+      description: |
+        This laneway runs past the factory.
       paths:
-        south: factory      
+        west: parking lot
+        south: factory
+        east: collapsed building
+
+    - name: parking lot
+      description: |
+        An empty parking lot with a large wall on it's west side. High up on the wall
+        you can see a ledge wide enough to stand and walk on. Unfortunately, it's too 
+        high to reach
+      paths:
+        east: laneway
+        
+    - name: collapsed building
+      description: |
+        This building has completely collapsed. Otherwise, though, it doesn't
+        seem too interesting.
+      paths:
+        west: laneway
+        east: overgrown garden
+      items: 
+        - ladder
+
+    - name: overgrown garden
+      description: |
+        Bet this used to be a pretty nice garden once upon a time. 
+      paths:
+        east: old office building
+        west: collapsed building
+      items:
+        - gate
+
+    - name: junkyard
+      description: |
+          What is the point of a junkyard anyway? This one has a lot of unrecognizable
+          rusted metal and one nice large truck that looks like it last ran in 1985. 
+      paths:
+        north: overgrown garden
+      items:
+        - bus fare
+
+    - name: old office building
+      description: |
+        Sure, it's from another era, but this old office doesn't look to bad. 
+        Two parts Mad Men, one part Tales From The Crypt.
+      paths:
+        west: overgrown garden
+      items:
+          - gate key
+
+    - name: ledge
+      description: |
+        A tall narrow ledge that runs along the wass toward a nearby cannery. To 
+        the south there's a broken window you could cetainly squeeze through.
+      paths:
+        south: cannery offices
+        east: parking lot
+        
+    - name: cannery offices
+      description: |
+        This place is a wreck. Old papers are everywhere.
+      paths:
+        west: lunch room
+        south: cannery floor
+
+    - name: lunch room
+      description: |
+        Too bad there's no food left in this lunch room.
+      paths:
+        east: cannery offices  
+        north: storage room
+
+    - name: storage room
+      description: |
+        Doesn't seem like they're storing much anymore.
+      paths:
+        south: lunch room
+      items:
+        - battery
+
+    - name: cannery floor
+      description: |
+        So this is where peached come from. The room is full of large machines
+        that you can only assume are canning equipment. 
+      paths:
+        north: cannery offices
+      items:
+        - large crane
+
+    - name: desolate roadway
+      description: |
+        It's dark and this roadway seems straight out of a horror film.
+      paths:
+        north: cannery floor
+      items:
+        - bully
+
+    - name: bus stop
+      description: |
+        Finally, you're almost home.
+      paths:
+        west: desolate roadway
+        
 items:
-    - name: fireworks
-      description: they look pretty powerful
-      message: a beautiful boom
-    - name: a bomb
-      description: scary
-      require: fireworks
-      message: a terrible boom. You destroyed fireworks.
-      remove: fireworks
+    - name: a bully
+      description: | 
+          A bully standing with his hand out. He's not going anywhere without
+          a cash prize. He looks impatient.
+          
+          Behind him, you can see a parking lot.
+    - name: a five dollar bill
+      description: A crumpled five dollar bill.
+      require: bully
+      remove: bully
+      message: |
+        The bully takes your five dollars and scrams. Now you're free to travel past him.
+      paths:
+         east: bus stop
+         
+    - name: ladder
+      description: |
+        A pretty typical ladder that's in surprisingly good shape.
+      message: |
+        You place the ladder against the wall. Now you can climb up to the ledge
+      in: parking lot
+      paths:
+          west: ledge
+          
+    - name: a locked gate
+      description: |
+        Past the gate you can see a junkyard. However the gate is locked and you can't get by.
+    - name: a gate key
+      description: |
+        A typical key.
+      require: locked gate
+      remove: locked gate
+      paths:
+        south: junkyard
+      message: |
+        You unlock and open the gate. 
+
+    - name: a large crane
+      description: |
+        There's a south exit, but it's blocked by a large industrial crane. It looks like it
+        would be easy enough to move it, but the controls don't seem to have any power.
+        
+        There's a large empty space that looks like it could hold a battery of some sort.
+    - name: a battery
+      description: |
+        A car battery, the big heavy kind.
+      require: large crane
+      remove: large crane
+      paths:
+        south: desolate roadway
+      message: |
+        You insert the battery into the crane. It fits perfectly. You lean the crane control-stick 
+        to one side and move it out of your way.
+        
+    - name: bus fare
+      description: |
+         Strange, but in the front seat of the truck there appears to be $2.25, just enough 
+         to catch a city bus.
+      in: bus stop
+      message: |
+        Congratulations! You've made it out of here! Victory!
+        
+        Very impressive. Feel free to stay and look a little, if you're interested.
+         

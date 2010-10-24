@@ -1,0 +1,32 @@
+To win the game:
+
+pick up five dollar bill
+go north
+go north
+go east
+pick up ladder
+go east
+go east
+pick up key
+go west
+use key
+go south
+pick up bus fare
+go north
+go west
+go west
+go west
+use ladder
+go west
+go south
+go west
+go north
+pick up battery
+go south
+go east
+go south
+use battery
+go south
+use five dollar bill
+go east
+use bus fare

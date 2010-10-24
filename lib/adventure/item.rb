@@ -39,7 +39,7 @@ class Adventure
     
     def add_paths(current_room)
       paths.each do |direction, room| 
-        current_room.paths[direction] = room
+        current_room.paths[direction.to_sym] = room
       end
     end
     
