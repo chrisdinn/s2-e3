@@ -42,7 +42,30 @@ class RoomTest < Test::Unit::TestCase
     room = Adventure::Room.new "shopping mall"
     room.add_item "escalator", :description => "An old escalator"
     
-    assert_equal nil, room.look_at("stairs")
+    assert_nil room.look_at("stairs")
+  end
+  
+  def test_take_item
+    room = Adventure::Room.new "shopping mall"
+    room.add_item "a shopping bag", :description => "Someone must've bought something here once upon a time."
+    
+    room.take("bag")
+    
+    assert room.items.empty?
+  end
+  
+  def test_take_non_existant_item
+    room = Adventure::Room.new "shopping mall"
+    room.add_item "a shopping bag", :description => "Someone must've bought something here once upon a time."
+    
+    assert_nil room.take("monkey")
+  end
+  
+  def test_take_fixed_position_item
+    room = Adventure::Room.new "shopping mall"
+    room.add_item "escalator", :fixed_position => true
+    
+    assert_nil room.take("escalator")
   end
   
 end

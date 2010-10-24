@@ -66,6 +66,44 @@ class AdventureTest < Test::Unit::TestCase
     assert_match /#{description}/, adventure.command("look at shopping cart")
   end
   
+  def test_pick_up_command
+    adventure = Adventure.new
+    adventure.add_room "shopping mall"
+    adventure.current_room.add_item "a shopping bag"
+
+    adventure.command("pick up shopping bag")
+
+    assert_equal 1, adventure.inventory.size
+    assert_equal "a shopping bag", adventure.inventory.first.name
+  end
+  
+  def test_take_alias_for_pick_up
+    adventure = Adventure.new
+    adventure.add_room "shopping mall"
+    adventure.current_room.add_item "a shopping bag"
+
+    adventure.command("take shopping bag")
+
+    assert_equal 1, adventure.inventory.size
+    assert_equal "a shopping bag", adventure.inventory.first.name
+  end
+
+  def test_drop_command
+    adventure = Adventure.new
+    adventure.add_room "shopping mall", :south => "parking lot"
+    adventure.add_room "parking lot", :description => "Empty lot"
+    adventure.current_room.add_item "a shopping bag"
+    
+    adventure.command("pick up shopping bag")
+    adventure.command("go south")
+    adventure.command("drop shopping bag")
+    
+    assert_equal "parking lot", adventure.current_room.name
+    assert_equal 1, adventure.current_room.items.size
+    assert_equal 0, adventure.inventory.size
+    assert_equal "a shopping bag", adventure.current_room.items.first.name
+  end
+  
   def test_unrecognized_command
     adventure = Adventure.new
 

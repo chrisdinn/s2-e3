@@ -36,11 +36,21 @@ class Adventure
     end
     
     def look_at(item_name)
-      if item = items.find{ |item| item.name =~ /#{item_name}$/ }
+      if item = find_item(item_name)
         item.description 
       end
     end
     
+    def take(item_name)
+      if item = find_item(item_name)
+        items.delete(item) if item.takeable?
+      end
+    end
+    
+    def drop(item)
+      items << item
+    end
+        
     def user_output
       output = description + "\n\n"
       
@@ -59,6 +69,12 @@ class Adventure
         output << "Go #{k} to #{v}\n" if v
       end
       output
+    end
+    
+    private
+    
+    def find_item(item_name)
+      items.find{ |item| item.name =~ /#{item_name}$/ }
     end
   end
 end

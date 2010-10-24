@@ -5,10 +5,11 @@ require 'adventure/item'
 
 class Adventure
   
-  attr_reader :rooms, :current_room
+  attr_reader :rooms, :current_room, :inventory
   
   def initialize
     @rooms = []
+    @inventory = []
   end
   
   def self.from_file(file)
@@ -42,13 +43,28 @@ class Adventure
     response = "\n"
 
     case text
-    when /^\s*go\s+(.+)/
+    when verb_is('go')
       go $1.to_sym
       response << current_room.user_output
-    when /^\s*look at\s*(.+)$/
+    when verb_is('look at')
       response << current_room.look_at($1)
-    when /^\s*look\s*$/
+    when verb_is('look')
       response << current_room.user_output
+    when verb_is('pick up'), verb_is('take')
+      item = current_room.take($1)
+      if item
+        inventory << item
+        response << "Picked up #{item.name}\n"
+      else
+        response << "I can't see that.\n"
+      end
+    when verb_is('drop')
+      if item = find_inventory_item($1)
+        current_room.drop inventory.delete(item)
+        response << "Dropped #{item.name}"
+      else
+        response << "Sadly, you can't drop what you don't have."
+      end
     else
       response << ["what?", "huh?", "don't understand that"][rand(3)] << "\n"
     end
@@ -56,4 +72,13 @@ class Adventure
     response << "\n"
   end
   
+  private
+  
+  def verb_is(verb)
+    /^\s*#{verb}\s*(.*)$/
+  end
+    
+  def find_inventory_item(item_name)
+    inventory.find{ |item| item.name =~ /#{item_name}$/ }
+  end
 end
