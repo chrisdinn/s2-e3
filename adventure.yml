@@ -1,3 +1,10 @@
+title: Red Desert
+greeting: 
+    Last night, what a night. You awaken with little memory of how you arrived.
+    
+    
+    However, the vicious hangover you're currently experiencing may be a clue.
+
 rooms:
     - name: dock
       description: 
@@ -9,7 +16,14 @@ rooms:
       paths:
         north: laneway
         south: dock
+      items:
+          - fireworks
     - name: laneway
       description: This laneway runs past the factory.
       paths:
         south: factory
+        
+items:
+    - name: fireworks
+      description: they look pretty powerful
+      message: a beautiful boom

@@ -62,7 +62,7 @@ class Adventure
         else
           output << "#{items[0].name}"
         end
-        output << "."
+        output << ".\n\n"
       end
       
       paths.each do |k, v|
@@ -71,10 +71,9 @@ class Adventure
       output
     end
     
-    private
-    
     def find_item(item_name)
-      items.find{ |item| item.name =~ /#{item_name}$/ }
-    end
+      items.find{ |item| item.named?(item_name) }
+    end    
+
   end
 end

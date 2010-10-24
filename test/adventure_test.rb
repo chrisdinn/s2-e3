@@ -104,6 +104,16 @@ class AdventureTest < Test::Unit::TestCase
     assert_equal "a shopping bag", adventure.current_room.items.first.name
   end
   
+  def test_use_command
+    adventure = Adventure.new
+    adventure.add_room "shopping mall", :south => "parking lot"
+    adventure.current_room.add_item "fireworks", :message => "a beautiful boom"
+    
+    adventure.command "pick up fireworks"
+    
+    assert_match /a beautiful boom/, adventure.command("use fireworks")
+  end
+  
   def test_unrecognized_command
     adventure = Adventure.new
 
@@ -113,12 +123,16 @@ class AdventureTest < Test::Unit::TestCase
   def test_load_adventure_from_yaml
     adventure = Adventure.from_file('test/test_adventure.yml')
     
+    assert_equal "Test adventure", adventure.title
+    assert_equal "Welcome message", adventure.greeting
+    
     assert_equal 2, adventure.rooms.size
     assert_equal "shopping mall", adventure.current_room.name
-    #assert_equal "ladder", adventure.current_room.items.first.name
-
-    assert_equal "parking lot", adventure.rooms.last.name
     assert_equal "parking lot", adventure.current_room.paths[:north]
+    
+    assert_equal 2, adventure.current_room.items.size
+    assert_equal "a ladder", adventure.current_room.items.first.name
+    assert_equal "shopping mall", adventure.current_room.items.first.room
   end
   
 end

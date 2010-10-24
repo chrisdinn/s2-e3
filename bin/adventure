@@ -7,7 +7,7 @@ system 'clear'
 begin
   
   adventure = Adventure.from_file('adventure.yml')
-  
+  puts adventure.introduction
   while line = Readline.readline("#{adventure.current_room.name.to_s} > ", true)
     exit if line.match(/^exit/)
     puts adventure.command(line)

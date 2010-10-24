@@ -1,9 +1,21 @@
+title: Test adventure
+greeting: Welcome message
 rooms:
     - name: shopping mall
       description: An abandoned shopping mall
       paths:
         north: parking lot 
+      items: 
+        - a ladder
+        - a shopping bag
+        
     - name: parking lot
       description: A dark and scary parking lot
       paths:
         south: shopping mall
+        
+items:
+    - name: a ladder
+      description: a broken wooden ladder
+      in: shopping mall
+      message: You place the ladder against the wall.

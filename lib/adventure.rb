@@ -5,6 +5,8 @@ require 'adventure/item'
 
 class Adventure
   
+  attr_accessor :title, :greeting
+
   attr_reader :rooms, :current_room, :inventory
   
   def initialize
@@ -12,31 +14,63 @@ class Adventure
     @inventory = []
   end
   
-  def self.from_file(file)
-    raw_adventure = YAML.load_file(file)
-    adventure = new
-    raw_adventure["rooms"].each do |room|      
-      adventure.add_room  room.delete("name"), :description => room["description"],
-                          :north => room["paths"]["north"],
-                          :south => room["paths"]["south"],
-                          :east => room["paths"]["east"],
-                          :west => room["paths"]["west"]
+  class << self
+    
+    def from_file(file)
+      raw_adventure = YAML.load_file(file)
+      adventure = new
+    
+      adventure.title = raw_adventure["title"]
+      adventure.greeting = raw_adventure["greeting"]
+    
+      items = raw_adventure["items"].collect do |raw_item|
+        Item.new raw_item.delete("name"), symbolize_keys(raw_item)
+      end
+      
+      raw_adventure["rooms"].each do |raw_room| 
+        room = adventure.add_room  raw_room.delete("name"), 
+                            :description => raw_room["description"],
+                            :north => raw_room["paths"]["north"],
+                            :south => raw_room["paths"]["south"],
+                            :east => raw_room["paths"]["east"],
+                            :west => raw_room["paths"]["west"]
+        
+        if raw_room["items"]  
+          raw_room["items"].each do |item_name| 
+             room.items << items.find{ |item| item.named?(item_name)  }
+          end
+        end
+      end
+      
+      adventure
     end
-  
-    adventure
+    
+    private
+    
+    def symbolize_keys(hash)
+      hash.each_key{ |key| hash[key.to_sym] = hash.delete(key) }
+    end
+    
   end
   
   def add_room(*args)
     room = Room.new(*args)
     @current_room = room unless current_room
     @rooms << room
+    room
   end
   
   def go(direction)
     new_room = rooms.find do |room|
-      current_room.paths[direction] == room.name
+      current_room.paths[direction.to_sym] == room.name
     end
     @current_room = new_room if new_room
+  end
+  
+  def introduction
+    intro = title + "\n\n"
+    intro << greeting << "\n\n"
+    intro << current_room.user_output << "\n"
   end
   
   def command(text)
@@ -44,27 +78,20 @@ class Adventure
 
     case text
     when verb_is('go')
-      go $1.to_sym
+      go $1
       response << current_room.user_output
     when verb_is('look at')
       response << current_room.look_at($1)
     when verb_is('look')
       response << current_room.user_output
     when verb_is('pick up'), verb_is('take')
-      item = current_room.take($1)
-      if item
-        inventory << item
-        response << "Picked up #{item.name}\n"
-      else
-        response << "I can't see that.\n"
-      end
+      response << take($1)
     when verb_is('drop')
-      if item = find_inventory_item($1)
-        current_room.drop inventory.delete(item)
-        response << "Dropped #{item.name}"
-      else
-        response << "Sadly, you can't drop what you don't have."
-      end
+      response << drop($1)
+    when verb_is('use')
+      response << use($1)
+    when verb_is('help')
+      response << help
     else
       response << ["what?", "huh?", "don't understand that"][rand(3)] << "\n"
     end
@@ -77,8 +104,41 @@ class Adventure
   def verb_is(verb)
     /^\s*#{verb}\s*(.*)$/
   end
-    
-  def find_inventory_item(item_name)
-    inventory.find{ |item| item.name =~ /#{item_name}$/ }
+  
+  def take(item_name)
+    item = current_room.take(item_name)
+    if item
+      inventory << item
+      "Picked up #{item.name}\n"
+    else
+      "You can't see that.\n"
+    end
+  end
+  
+  def use(item_name)
+    if item = inventory.find{ |item| item.named?(item_name) }
+      item.use(current_room) + "\n"
+    else
+      "You don't have #{item_name}.\n"
+    end
+  end
+  
+  def drop(item_name)
+    if item = inventory.find{ |item| item.named?(item_name) }
+      current_room.drop inventory.delete(item)
+      "Dropped #{item.name}.\n"
+    else
+      "Sadly, you can't drop what you don't have.\n"
+    end
+  end
+  
+  def help
+    %{You can do all sorts of thing. Try:
+  - "look"
+  - "go <direction>"
+  - "look at <item>"
+  - "pick up <item>"
+  - "use <item>"
+    }
   end
 end
